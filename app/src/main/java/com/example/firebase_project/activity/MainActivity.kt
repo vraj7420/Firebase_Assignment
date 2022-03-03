@@ -47,23 +47,9 @@ class MainActivity : AppCompatActivity() {
         val btnCancel = addDialog.btnCancel
         chbBannerAds.setOnClickListener {
             bannerAdCheck = !bannerAdCheck
-            if (bannerAdCheck || interstitialAdsAdCheck) {
-                btnOk.isClickable = true
-                btnOk.setTextColor(resources.getColor(R.color.purple_500))
-            } else {
-                btnOk.isClickable = false
-                btnOk.setTextColor(resources.getColor(android.R.color.darker_gray))
-            }
         }
         chbInterstitialAds?.setOnClickListener {
             interstitialAdsAdCheck = !interstitialAdsAdCheck
-            if (bannerAdCheck || interstitialAdsAdCheck) {
-                btnOk.isClickable = true
-                btnOk.setTextColor(resources.getColor(R.color.purple_500))
-            } else {
-                btnOk.isClickable = false
-                btnOk.setTextColor(resources.getColor(android.R.color.darker_gray))
-            }
         }
         btnCancel.setOnClickListener {
             addDialog.dismiss()
