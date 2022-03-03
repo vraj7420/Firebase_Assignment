@@ -61,6 +61,7 @@
     <string name="interstitial_ads">Interstitial Ads</string>
     <string name="ok">Ok</string>
     <string name="cancel">Cancel</string>
+    <string name="allow_notification_for_this_app">Allow notification for this app</string>
     <string-array name="Grade">
         <item>A+</item>
         <item>A</item>

@@ -17,6 +17,7 @@ import kotlinx.android.synthetic.main.dialog_box_select_adds.*
 class MainActivity : AppCompatActivity() {
     private var interstitialAdd: InterstitialAd? = null
     private var bannerAdCheck = false
+    private lateinit var addDialog:Dialog
     private var interstitialAdsAdCheck = false
     private var chbInterstitialAds: MaterialCheckBox? = null
 
@@ -35,10 +36,14 @@ class MainActivity : AppCompatActivity() {
         btnAdMob.setOnClickListener {
             shoDialogBox()
         }
+        btnNotification.setOnClickListener {
+            val intentNotificationActivity = Intent(this,NotificationActivity::class.java)
+            startActivity(intentNotificationActivity)
+        }
     }
 
     private fun shoDialogBox() {
-        val addDialog = Dialog(this)
+        addDialog = Dialog(this)
         addDialog.setContentView(R.layout.dialog_box_select_adds)
         addDialog.setTitle("Select Ads")
         val chbBannerAds = addDialog.chbBannerAds
@@ -46,17 +51,17 @@ class MainActivity : AppCompatActivity() {
         val btnOk = addDialog.btnOk
         val btnCancel = addDialog.btnCancel
         chbBannerAds.setOnClickListener {
-            bannerAdCheck = !bannerAdCheck
+            bannerAdCheck = chbBannerAds.isChecked
         }
         chbInterstitialAds?.setOnClickListener {
-            interstitialAdsAdCheck = !interstitialAdsAdCheck
+            interstitialAdsAdCheck = chbInterstitialAds!!.isChecked
         }
         btnCancel.setOnClickListener {
             addDialog.dismiss()
         }
         btnOk.setOnClickListener {
             if (interstitialAdsAdCheck) {
-                showInterstitialAds()
+                loadAdd()
             } else {
                 goToNextScreen()
             }
@@ -77,12 +82,14 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun onAdLoaded(interstitialAd: InterstitialAd) {
+
                     interstitialAdd = interstitialAd
+                    showInterstitialAds()
                     interstitialAdd?.fullScreenContentCallback =
                         object : FullScreenContentCallback() {
                             override fun onAdDismissedFullScreenContent() {
-                                goToNextScreen()
                                 interstitialAdd = null
+                                goToNextScreen()
                             }
 
                             override fun onAdFailedToShowFullScreenContent(adError: AdError?) {
@@ -100,10 +107,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        loadAdd()
+        interstitialAdsAdCheck=false
+        bannerAdCheck=false
     }
 
     private fun goToNextScreen() {
+        addDialog.dismiss()
         val intentAdMob = Intent(this, AdMobActivity::class.java)
         intentAdMob.putExtra("bannerAds", bannerAdCheck)
         intentAdMob.putExtra("interstitialAds", interstitialAdsAdCheck)
@@ -113,6 +122,9 @@ class MainActivity : AppCompatActivity() {
     private fun showInterstitialAds() {
         if (interstitialAdd != null) {
             interstitialAdd?.show(this)
+        }
+        else{
+            goToNextScreen()
         }
     }
 }
