@@ -7,9 +7,13 @@
         <entry key="..\:/vraj educations fille/tatvasoft projects/Firebase_Project/app/src/main/res/drawable/ic_edit.xml" value="0.26614583333333336" />
         <entry key="..\:/vraj educations fille/tatvasoft projects/Firebase_Project/app/src/main/res/drawable/sheet_dialog_background.xml" value="0.14322916666666666" />
         <entry key="..\:/vraj educations fille/tatvasoft projects/Firebase_Project/app/src/main/res/drawable/sheetdailog_background.xml" value="0.26614583333333336" />
-        <entry key="..\:/vraj educations fille/tatvasoft projects/Firebase_Project/app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="..\:/vraj educations fille/tatvasoft projects/Firebase_Project/app/src/main/res/layout/activity_ad_mob.xml" value="0.264" />
+        <entry key="..\:/vraj educations fille/tatvasoft projects/Firebase_Project/app/src/main/res/layout/activity_main.xml" value="0.264" />
         <entry key="..\:/vraj educations fille/tatvasoft projects/Firebase_Project/app/src/main/res/layout/activity_student_registration.xml" value="0.25" />
+        <entry key="..\:/vraj educations fille/tatvasoft projects/Firebase_Project/app/src/main/res/layout/dialog_box_select_adds.xml" value="0.536" />
         <entry key="..\:/vraj educations fille/tatvasoft projects/Firebase_Project/app/src/main/res/layout/item_student_list.xml" value="0.4" />
+        <entry key="..\:/vraj educations fille/tatvasoft projects/Firebase_Project/app/src/main/res/layout/item_student_list_ad_mob_screen.xml" value="0.17239583333333333" />
+        <entry key="..\:/vraj educations fille/tatvasoft projects/Firebase_Project/app/src/main/res/layout/sheet_layout_student_registration.xml" value="0.25" />
         <entry key="..\:/vraj educations fille/tatvasoft projects/Firebase_Project/app/src/main/res/menu/student_info_activity_menu.xml" value="0.25" />
       </map>
     </option>

@@ -39,7 +39,7 @@
     <string name="error_birth_is_empty">Please Enter Date of Birth</string>
     <string name="error_passing_year">Enter Hsc Passing  Year</string>
     <string name="error_percentage">Enter Hsc Percentage</string>
-    <string name="student_name">Student Name</string>
+    <string name="student_name">Student Name:</string>
     <string name="contact_number">Contact Number:</string>
     <string name="course_name">Course Name:</string>
     <string name="update">Update</string>
@@ -48,6 +48,19 @@
     <string name="select_grade">Select Grade:</string>
     <string name="enter_student_total_marks">Enter Student Total Marks</string>
     <string name="error_mark">Please Enter Total Mark</string>
+    <string name="student_grade">Student Grade:</string>
+    <string name="student_total_mark">Student Total Mark:</string>
+    <string name="turn_on_internet">Please Internet Turn On For this Operation</string>
+    <string name="student_data_stored">Student Data Added Successfully</string>
+    <string name="fail_to_get_data">Fail to get data.</string>
+    <string name="no_data_found">No Data Found</string>
+    <string name="student_info">Student Info</string>
+    <string name="admob">AdMob</string>
+    <string name="notification">Notification</string>
+    <string name="banner_ads">Banner ads</string>
+    <string name="interstitial_ads">Interstitial Ads</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
     <string-array name="Grade">
         <item>A+</item>
         <item>A</item>

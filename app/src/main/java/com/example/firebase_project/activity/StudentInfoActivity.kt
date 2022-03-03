@@ -1,37 +1,38 @@
-package com.example.firebase_project
+package com.example.firebase_project.activity
 
-import android.annotation.SuppressLint
-import android.app.Dialog
-import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
-import android.os.Build
 import android.os.Bundle
 import android.view.*
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.firebase_project.R
+import com.example.firebase_project.Utility
+import com.example.firebase_project.adapter.RecyclerStudentListAdapter
+import com.example.firebase_project.model.StudentResultModel
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.database.*
-import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.activity_student_info.*
 
 
-class MainActivity : AppCompatActivity() {
-    private lateinit var sheetDialog: Dialog
+class StudentInfoActivity : AppCompatActivity() {
+
+    private lateinit var sheetDialog: BottomSheetDialog
     private lateinit var tetStudentName: TextInputEditText
     private lateinit var tetMobileNumber: TextInputEditText
     private lateinit var tetTotalMarks: TextInputEditText
     private lateinit var spinnerGrade: Spinner
     private val ref = FirebaseDatabase.getInstance().getReference("Student")
     private val studentResultList = ArrayList<StudentResultModel>()
-    private var id = 0
+    private var id: Long = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        if (checkForInternet(this)) {
+        setContentView(R.layout.activity_student_info)
+        if (Utility().checkForInternet(this)) {
             fetchData()
         } else {
-            Toast.makeText(this, "Internet Of For Fetching  Data Turn On Internet", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.turn_on_internet), Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -74,16 +75,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun openDialogSheet() {
-        sheetDialog = Dialog(this)
+        sheetDialog = BottomSheetDialog(this)
         sheetDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         sheetDialog.setContentView(R.layout.sheet_layout_student_registration)
         sheetDialog.show()
-        val btnSubmit: Button = sheetDialog.findViewById(R.id.btnAddOrUpdate)
-        tetStudentName = sheetDialog.findViewById(R.id.tetStudentName)
-        tetMobileNumber = sheetDialog.findViewById(R.id.tetMobileNumber)
-        tetTotalMarks = sheetDialog.findViewById(R.id.tetTotalMark)
-        spinnerGrade = sheetDialog.findViewById(R.id.spinnerGrade)
-
+        val btnSubmit: Button? = sheetDialog.findViewById(R.id.btnAddOrUpdate)
+        tetStudentName = sheetDialog.findViewById(R.id.tetStudentName)!!
+        tetMobileNumber = sheetDialog.findViewById(R.id.tetMobileNumber)!!
+        tetTotalMarks = sheetDialog.findViewById(R.id.tetTotalMark)!!
+        spinnerGrade = sheetDialog.findViewById(R.id.spinnerGrade)!!
         val gradeSelectionAdapter = ArrayAdapter(
             this,
             android.R.layout.simple_spinner_item,
@@ -91,13 +91,14 @@ class MainActivity : AppCompatActivity() {
         )
         spinnerGrade.adapter = gradeSelectionAdapter
 
-        btnSubmit.setOnClickListener {
-            if (checkForInternet(this)) {
+        btnSubmit?.setOnClickListener {
+            if (Utility().checkForInternet(this)) {
                 if (validateStudentData()) {
                     storeDataInFirebase()
                 }
             } else {
-                Toast.makeText(this, "Internet Off For Store Data  Turn On Internet", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.turn_on_internet), Toast.LENGTH_SHORT)
+                    .show()
             }
 
         }
@@ -112,11 +113,10 @@ class MainActivity : AppCompatActivity() {
     private fun storeDataInFirebase() {
         ref.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                id = snapshot.childrenCount.toInt() + 1
+                id = snapshot.childrenCount + 1
             }
 
             override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
             }
         })
 
@@ -124,68 +124,43 @@ class MainActivity : AppCompatActivity() {
             StudentResultModel(
                 id,
                 tetStudentName.text.toString(),
-                tetMobileNumber.text.toString().toLong(),
-                tetTotalMarks.text.toString().toInt(),
+                tetMobileNumber.text.toString(),
+                tetTotalMarks.text.toString().toDouble(),
                 spinnerGrade.selectedItem.toString()
             )
         ).addOnSuccessListener {
             sheetDialog.dismiss()
-            Toast.makeText(this, "Value Added Succefully", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, getString(R.string.student_data_stored), Toast.LENGTH_SHORT).show()
             fetchData()
         }
     }
 
-    private fun checkForInternet(context: Context): Boolean {
-
-        val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val network = connectivityManager.activeNetwork ?: return false
-            val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
-            return when {
-                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
-                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
-                else -> false
-            }
-        } else {
-            @Suppress("DEPRECATION")
-            val networkInfo = connectivityManager.activeNetworkInfo ?: return false
-            @Suppress("DEPRECATION")
-            return networkInfo.isConnected
-        }
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    fun fetchData() {
+    private fun fetchData() {
         studentResultList.clear()
         ref.get().addOnSuccessListener {
-            for (student in it.children) {
-                val studentId = student.child("id").getValue(Int::class.java)
-                val studentName = student.child("studentName").getValue(String::class.java)
-                val studentNumber = student.child("studentNumber").getValue(Long::class.java)
-                val studentTotalMark = student.child("studentTotalMark").getValue(Int::class.java)
-                val studentGrade = student.child("studentGrade").getValue(String::class.java)
-                studentResultList.add(
-                    StudentResultModel(
-                        studentId, studentName.toString(),
-                        studentNumber.toString().toLong(),
-                        studentTotalMark.toString().toInt(),
-                        studentGrade.toString()
+            if (it.exists()) {
+                for (student in it.children) {
+                    val studentId: Long = student.child("id").getValue(Long::class.java) ?: 0
+                    val studentName = student.child("studentName").getValue(String::class.java)
+                    val studentNumber: String = student.child("studentNumber").getValue(String::class.java) ?: ""
+                    val studentTotalMark: Double = student.child("studentTotalMark").getValue(Double::class.java) ?: 0.0
+                    val studentGrade = student.child("studentGrade").getValue(String::class.java)
+                    studentResultList.add(
+                        StudentResultModel(
+                            studentId, studentName.toString(),
+                            studentNumber,
+                            studentTotalMark.toString().toDouble(),
+                            studentGrade.toString()
+                        )
                     )
-                )
+                }
+            } else {
+                Toast.makeText(this, getString(R.string.no_data_found), Toast.LENGTH_SHORT).show()
             }
-            val studentInfoAdapter = RecyclerStudentListAdapter(this@MainActivity, studentResultList)
-            studentInfoAdapter.notifyDataSetChanged()
-            rvStudentInfo.layoutManager = LinearLayoutManager(this@MainActivity)
+            val studentInfoAdapter =
+                RecyclerStudentListAdapter(this@StudentInfoActivity, studentResultList)
+            rvStudentInfo.layoutManager = LinearLayoutManager(this@StudentInfoActivity)
             rvStudentInfo.adapter = studentInfoAdapter
         }
-        ref.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(this@MainActivity, "Fail to get data.", Toast.LENGTH_SHORT).show()
-            }
-        })
-
     }
 }

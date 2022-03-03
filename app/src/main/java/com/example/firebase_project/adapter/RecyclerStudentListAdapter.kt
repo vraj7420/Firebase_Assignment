@@ -1,15 +1,15 @@
-package com.example.firebase_project
+package com.example.firebase_project.adapter
 
 import android.annotation.SuppressLint
 import android.app.AlertDialog
-import android.app.Dialog
 import android.content.Context
-import android.net.ConnectivityManager
-import android.net.NetworkCapabilities
-import android.os.Build
 import android.view.*
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
+import com.example.firebase_project.R
+import com.example.firebase_project.Utility
+import com.example.firebase_project.model.StudentResultModel
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -21,7 +21,7 @@ class RecyclerStudentListAdapter(
     private var ctx: Context,
     private var studentList: ArrayList<StudentResultModel>
 ) : RecyclerView.Adapter<RecyclerStudentListAdapter.StudentListViewHolder>() {
-    private lateinit var sheetDialog: Dialog
+    private lateinit var sheetDialog: BottomSheetDialog
     private lateinit var tetStudentName: TextInputEditText
     private lateinit var tetMobileNumber: TextInputEditText
     private lateinit var tetTotalMarks: TextInputEditText
@@ -38,102 +38,67 @@ class RecyclerStudentListAdapter(
     @SuppressLint("SetTextI18n", "NotifyDataSetChanged")
     override fun onBindViewHolder(holder: StudentListViewHolder, position: Int) {
         val student = studentList[position]
-        holder.tvContactNumber.text = student.studentNumber.toString()
-        holder.tvStudentName.text = student.studentName
-        holder.tvGrade.text = student.StudentGrade
-        holder.tvTotalMark.text = student.studentTotalMark.toString()
+        holder.tvContactNumber.text =
+            ctx.getString(R.string.contact_number) + " " + student.studentNumber
+        holder.tvStudentName.text = ctx.getString(R.string.student_name) + " " + student.studentName
+        holder.tvGrade.text = ctx.getString(R.string.student_grade) + " " + student.StudentGrade
+        holder.tvTotalMark.text =
+            ctx.getString(R.string.student_total_mark) + " " + student.studentTotalMark.toString()
         holder.btnUpdate.setOnClickListener {
-            openDialogSheet(student.id)
+            showAddStudentDataBottomSheet(student.id)
         }
         holder.btnDelete.setOnClickListener {
             deleteStudentData(student.id)
-
         }
     }
 
-    private fun deleteStudentData(id: Int?) {
-        val alertDialog = AlertDialog.Builder(ctx)
-        alertDialog.setTitle("Delete Data")
-        alertDialog.setMessage("Are you  Sure  Delete This Data ?")
-        alertDialog.setPositiveButton("Yes") { _, _ ->
-            if (checkForInternet(ctx)) {
-                ref.child(id.toString()).removeValue().addOnSuccessListener {
-                    fetchData()
-                }
 
-            } else {
-                Toast.makeText(
-                    ctx,
-                    "Internet Of For Delete  Data Turn On Internet",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-
-        }
-        alertDialog.setNegativeButton("No") { dialogInterface, _ ->
-            dialogInterface.dismiss()
-        }
-        alertDialog.show()
-    }
-
-    private fun setData(id: Int?) {
+    private fun setDataForUpdate(id: Long?) {
         ref.child(id.toString()).addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
                     val studentName = snapshot.child("studentName").getValue(String::class.java)
-                    val studentNumber = snapshot.child("studentNumber").getValue(Long::class.java)
+                    val studentNumber = snapshot.child("studentNumber").getValue(String::class.java)
                     val studentTotalMark =
                         snapshot.child("studentTotalMark").getValue(Int::class.java)
-                    //  val studentGrade = snapshot.child("studentGrade").getValue(String::class.java)
                     tetStudentName.setText(studentName)
-                    tetMobileNumber.setText(studentNumber.toString())
+                    tetMobileNumber.setText(studentNumber)
                     tetTotalMarks.setText(studentTotalMark.toString())
                 }
             }
 
             override fun onCancelled(error: DatabaseError) {
-                TODO("Not yet implemented")
             }
         })
     }
 
 
-    private fun openDialogSheet(id: Int?) {
-
-        sheetDialog = Dialog(ctx)
+    private fun  showAddStudentDataBottomSheet(id: Long?) {
+        sheetDialog = BottomSheetDialog(ctx)
         sheetDialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         sheetDialog.setContentView(R.layout.sheet_layout_student_registration)
         sheetDialog.show()
-        if (checkForInternet(ctx)) {
-            setData(id)
+        if (Utility().checkForInternet(ctx)) {
+            setDataForUpdate(id)
         } else {
-            Toast.makeText(ctx, "Internet Of For Update  Data Turn On Internet", Toast.LENGTH_SHORT).show()
+            Toast.makeText(ctx, ctx.getString(R.string.turn_on_internet), Toast.LENGTH_SHORT).show()
         }
 
-        val btnSubmit: Button = sheetDialog.findViewById(R.id.btnAddOrUpdate)
-        btnSubmit.setOnClickListener {
-            if (checkForInternet(ctx)) {
+        val btnSubmit: Button? = sheetDialog.findViewById(R.id.btnAddOrUpdate)
+        btnSubmit?.setOnClickListener {
+            if (Utility().checkForInternet(ctx)) {
                 if (validateStudentData()) {
                     updateStudentData(id)
                 }
             } else {
-                Toast.makeText(
-                    ctx,
-                    "Internet Of For Update  Data Turn On Internet",
-                    Toast.LENGTH_SHORT
-                ).show()
+                Toast.makeText(ctx, ctx.getString(R.string.turn_on_internet), Toast.LENGTH_SHORT).show()
             }
-
         }
-        tetStudentName = sheetDialog.findViewById(R.id.tetStudentName)
-        tetMobileNumber = sheetDialog.findViewById(R.id.tetMobileNumber)
-        tetTotalMarks = sheetDialog.findViewById(R.id.tetTotalMark)
-        spinnerGrade = sheetDialog.findViewById(R.id.spinnerGrade)
-        val gradeSelectionAdapter = ArrayAdapter(
-            ctx,
-            android.R.layout.simple_spinner_item,
-            ctx.resources.getStringArray(R.array.Grade)
-        )
+        tetStudentName = sheetDialog.findViewById(R.id.tetStudentName)!!
+        tetMobileNumber = sheetDialog.findViewById(R.id.tetMobileNumber)!!
+        tetTotalMarks = sheetDialog.findViewById(R.id.tetTotalMark)!!
+        spinnerGrade = sheetDialog.findViewById(R.id.spinnerGrade)!!
+        val gradeSelectionAdapter = ArrayAdapter(ctx, android.R.layout.simple_spinner_item, ctx.resources.getStringArray(R.array.Grade))
         spinnerGrade.adapter = gradeSelectionAdapter
         sheetDialog.window?.setLayout(
             ViewGroup.LayoutParams.MATCH_PARENT,
@@ -143,55 +108,34 @@ class RecyclerStudentListAdapter(
         sheetDialog.window!!.setGravity(Gravity.BOTTOM)
     }
 
-    private fun checkForInternet(context: Context): Boolean {
-
-        val connectivityManager =
-            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            val network = connectivityManager.activeNetwork ?: return false
-            val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
-            return when {
-                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) -> true
-                activeNetwork.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> true
-                else -> false
-            }
-        } else {
-            @Suppress("DEPRECATION")
-            val networkInfo = connectivityManager.activeNetworkInfo ?: return false
-            @Suppress("DEPRECATION")
-            return networkInfo.isConnected
-        }
-    }
 
     @SuppressLint("NotifyDataSetChanged")
     fun fetchData() {
         studentList.clear()
         ref.get().addOnSuccessListener {
-            for (student in it.children) {
-                val studentId = student.child("id").getValue(Int::class.java)
-                val studentName = student.child("studentName").getValue(String::class.java)
-                val studentNumber = student.child("studentNumber").getValue(Long::class.java)
-                val studentTotalMark = student.child("studentTotalMark").getValue(Int::class.java)
-                val studentGrade = student.child("studentGrade").getValue(String::class.java)
-                studentList.add(
-                    StudentResultModel(
-                        studentId, studentName.toString(),
-                        studentNumber.toString().toLong(),
-                        studentTotalMark.toString().toInt(),
-                        studentGrade.toString()
+            if (it.exists()) {
+                for (student in it.children) {
+                    val studentId: Long? = student.child("id").getValue(Long::class.java)
+                    val studentName = student.child("studentName").getValue(String::class.java)
+                    val studentNumber = student.child("studentNumber").getValue(String::class.java)
+                    val studentTotalMark =
+                        student.child("studentTotalMark").getValue(Int::class.java)
+                    val studentGrade = student.child("studentGrade").getValue(String::class.java)
+                    studentList.add(
+                        StudentResultModel(
+                            studentId, studentName.toString(),
+                            studentNumber.toString(),
+                            studentTotalMark.toString().toDouble(),
+                            studentGrade.toString()
+                        )
                     )
-                )
+                }
+                notifyDataSetChanged()
+            } else {
+                Toast.makeText(ctx,ctx.getString(R.string.no_data_found), Toast.LENGTH_SHORT).show()
             }
-            notifyDataSetChanged()
         }
-        ref.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-            }
 
-            override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(ctx, "Fail to get data.", Toast.LENGTH_SHORT).show()
-            }
-        })
 
     }
 
@@ -222,19 +166,40 @@ class RecyclerStudentListAdapter(
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private fun updateStudentData(id: Int?) {
+    private fun updateStudentData(id: Long?) {
         ref.child(id.toString()).setValue(
             StudentResultModel(
                 id,
                 tetStudentName.text.toString(),
-                tetMobileNumber.text.toString().toLong(),
-                tetTotalMarks.text.toString().toInt(),
+                tetMobileNumber.text.toString(),
+                tetTotalMarks.text.toString().toDouble(),
                 spinnerGrade.selectedItem.toString()
             )
         ).addOnSuccessListener {
             sheetDialog.dismiss()
             fetchData()
         }
+    }
+
+    private fun deleteStudentData(id: Long?) {
+        val alertDialog = AlertDialog.Builder(ctx)
+        alertDialog.setTitle("Delete Data")
+        alertDialog.setMessage("Are you  Sure  Delete This Data ?")
+        alertDialog.setPositiveButton("Yes") { _, _ ->
+            if (Utility().checkForInternet(ctx)) {
+                ref.child(id.toString()).removeValue().addOnSuccessListener {
+                    fetchData()
+                }
+            } else {
+                Toast.makeText(ctx, ctx.getString(R.string.turn_on_internet), Toast.LENGTH_SHORT)
+                    .show()
+            }
+
+        }
+        alertDialog.setNegativeButton("No") { dialogInterface, _ ->
+            dialogInterface.dismiss()
+        }
+        alertDialog.show()
     }
 
     override fun getItemCount(): Int {
@@ -246,7 +211,7 @@ class RecyclerStudentListAdapter(
         var tvGrade: TextView = itemView.findViewById(R.id.tvStudentGrade)
         var tvContactNumber: TextView = itemView.findViewById(R.id.tvContactNumber)
         var tvTotalMark: TextView = itemView.findViewById(R.id.tvStudentMark)
-        var btnUpdate: ImageButton = itemView.btnUpdate
-        var btnDelete: ImageButton = itemView.btnDelete
+        var btnUpdate: ImageView = itemView.btnUpdate
+        var btnDelete: ImageView = itemView.btnDelete
     }
 }
