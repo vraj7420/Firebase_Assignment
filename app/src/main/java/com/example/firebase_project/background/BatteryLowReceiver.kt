@@ -110,8 +110,10 @@ class BatteryLowReceiver : BroadcastReceiver() {
 
         } else {
                 builder = Notification.Builder(ctx)
+                    .setSmallIcon(smallIcon)
                     .setContentIntent(pendingIntent)
-                    .setContent(contentView)
+                    .setContentTitle(title)
+
 
             }
         notificationManager.notify(1234, builder.build())
