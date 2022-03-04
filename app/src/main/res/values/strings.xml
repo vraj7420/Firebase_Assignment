@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Firebase_Project</string>
+    <string name="app_name">Firebase AdMob Assignment</string>
     <string name="add">ADD</string>
     <string name="enter_user_name_or_student_id">Enter Student Id or User Name</string>
     <string name="enter_password">Enter Password</string>
@@ -59,9 +59,13 @@
     <string name="notification">Notification</string>
     <string name="banner_ads">Banner ads</string>
     <string name="interstitial_ads">Interstitial Ads</string>
-    <string name="ok">Ok</string>
+    <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="allow_notification_for_this_app">Allow notification for this app</string>
+    <string name="battery_low">Battery Low Please Charge Your Device</string>
+    <string name="battery_low_short_description">Your mobile battery is less then 15% please Charge</string>
+    <string name="notification_title">Notification Title</string>
+    <string name="todo">TODO</string>
     <string-array name="Grade">
         <item>A+</item>
         <item>A</item>

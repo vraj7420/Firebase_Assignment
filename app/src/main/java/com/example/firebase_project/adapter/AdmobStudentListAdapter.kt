@@ -10,13 +10,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.firebase_project.R
 import com.example.firebase_project.model.StudentResultModel
 
-class AdmobStudentListAdapter(
-    private var ctx: Context,
-    private var studentList: ArrayList<StudentResultModel>
-) : RecyclerView.Adapter<AdmobStudentListAdapter.StudentListViewHolder>() {
-
+class AdmobStudentListAdapter(private var studentList: ArrayList<StudentResultModel>) : RecyclerView.Adapter<AdmobStudentListAdapter.StudentListViewHolder>() {
+    private lateinit var ctx: Context
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StudentListViewHolder {
-        val recyclerInflater = LayoutInflater.from(ctx)
+        ctx=parent.context
+        val recyclerInflater = LayoutInflater.from(parent.context)
         val recyclerView = recyclerInflater.inflate(R.layout.item_student_list_ad_mob_screen, parent, false)
         return StudentListViewHolder(recyclerView)
     }
@@ -28,7 +26,6 @@ class AdmobStudentListAdapter(
         holder.tvStudentName.text = ctx.getString(R.string.student_name) + " " + student.studentName
         holder.tvGrade.text = ctx.getString(R.string.student_grade) + " " + student.StudentGrade
         holder.tvTotalMark.text = ctx.getString(R.string.student_total_mark) + " " + student.studentTotalMark.toString()
-
     }
     override fun getItemCount(): Int {
         return studentList.size

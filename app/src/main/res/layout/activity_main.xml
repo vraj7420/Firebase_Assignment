@@ -13,7 +13,7 @@
         android:gravity="center"
         android:text="@string/student_info"
         android:textAllCaps="false"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         app:layout_constraintVertical_chainStyle="packed"
         app:layout_constraintBottom_toTopOf="@+id/btnAdMob"
         app:layout_constraintEnd_toEndOf="parent"
@@ -22,30 +22,30 @@
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnAdMob"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:gravity="center"
         android:text="@string/admob"
         android:textAllCaps="false"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@id/btnNotification"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/btnStudentInfo"
+        app:layout_constraintStart_toStartOf="@id/btnStudentInfo"
         app:layout_constraintTop_toBottomOf="@+id/btnStudentInfo" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnNotification"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:gravity="center"
         android:text="@string/notification"
         android:textAllCaps="false"
-        android:textColor="@color/black"
+        android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/btnStudentInfo"
+        app:layout_constraintStart_toStartOf="@id/btnStudentInfo"
         app:layout_constraintTop_toBottomOf="@+id/btnAdMob" />
 
 
