@@ -74,6 +74,7 @@ class FirebaseMessageService : FirebaseMessagingService(){
     private fun customNotificationCreate(title: String, shortDescription: String) {
         val notificationLayout = RemoteViews(packageName,R.layout.custom_notification)
         notificationLayout.setTextViewText(R.id.tvTitle, title)
+        notificationLayout.setImageViewResource(R.id.imgIcon,R.drawable.ic_baseline_notifications)
         notificationLayout.setTextViewText(R.id.tvMessage, shortDescription)
 
 
