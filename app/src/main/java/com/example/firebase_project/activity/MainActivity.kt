@@ -8,10 +8,14 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.example.firebase_project.R
 import com.google.android.material.checkbox.MaterialCheckBox
+import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.database.FirebaseDatabase
+import kotlinx.android.synthetic.main.activity_ad_mob.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.dialog_box_select_adds.*
 
 class MainActivity : AppCompatActivity() {
+    private val ref = FirebaseDatabase.getInstance().getReference("AdIds")
     private var bannerAdCheck = false
     private lateinit var addDialog: Dialog
     private var interstitialAdsAdCheck = false
@@ -55,6 +59,19 @@ class MainActivity : AppCompatActivity() {
         }
         chbInterstitialAds?.setOnClickListener {
             interstitialAdsAdCheck = chbInterstitialAds!!.isChecked
+            ref.get().addOnSuccessListener {
+                if (it.exists()) {
+                        val adUnitId=it.child("adUnitId").getValue(String::class.java)
+                        val sharedPreferences = getSharedPreferences("SharedPref", MODE_PRIVATE)
+                        val adUnitIdEditor = sharedPreferences.edit()
+                        adUnitIdEditor.putString("AdUnitId",adUnitId.toString())
+                        adUnitIdEditor.apply()
+
+                } else {
+                    Snackbar.make(rootViewAdMob,getString(R.string.no_data_found), Snackbar.LENGTH_LONG).show()
+                }
+
+            }
         }
         btnCancel.setOnClickListener {
             addDialog.dismiss()

@@ -66,6 +66,8 @@
     <string name="battery_low_short_description">Your mobile battery is less then 15% please Charge</string>
     <string name="notification_title">Notification Title</string>
     <string name="todo">TODO</string>
+    <string name="testing_is_awecome">Testing is awecome</string>
+    <string name="testing">Testing</string>
     <string-array name="Grade">
         <item>A+</item>
         <item>A</item>

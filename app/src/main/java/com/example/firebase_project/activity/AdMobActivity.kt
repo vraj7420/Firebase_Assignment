@@ -68,14 +68,7 @@ class AdMobActivity : AppCompatActivity() {
                     val studentTotalMark: Double =
                         student.child("studentTotalMark").getValue(Double::class.java) ?: 0.0
                     val studentGrade = student.child("studentGrade").getValue(String::class.java)
-                    studentResultList.add(
-                        StudentResultModel(
-                            studentId, studentName.toString(),
-                            studentNumber,
-                            studentTotalMark.toString().toDouble(),
-                            studentGrade.toString()
-                        )
-                    )
+                    studentResultList.add(StudentResultModel(studentId, studentName.toString(), studentNumber, studentTotalMark.toString().toDouble(), studentGrade.toString()))
                 }
             } else {
                 Snackbar.make(rootViewAdMob,getString(R.string.no_data_found),Snackbar.LENGTH_LONG).show()
@@ -87,9 +80,11 @@ class AdMobActivity : AppCompatActivity() {
     }
     private fun loadAdd() {
         val adRequest = AdRequest.Builder().build()
+        val sharedPreferences = getSharedPreferences("SharedPref", MODE_PRIVATE)
+        val adUnitId= sharedPreferences.getString("AdUnitId"," ")
         InterstitialAd.load(
             this,
-            "ca-app-pub-3940256099942544/1033173712",
+            adUnitId,
             adRequest,
             object : InterstitialAdLoadCallback() {
                 override fun onAdFailedToLoad(adError: LoadAdError) {

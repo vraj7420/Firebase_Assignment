@@ -33,15 +33,18 @@
             android:exported="false">
 
         </activity>
-        <receiver
-            android:name=".background.BatteryLowReceiver"
-            android:exported="true">
+        <meta-data
+            android:name="firebase_messaging_auto_init_enabled"
+            android:value="false" />
+        <meta-data
+            android:name="firebase_analytics_collection_enabled"
+            android:value="false" />
+        <service android:name=".background.FirebaseMessageService"
+            android:exported="false"  >
             <intent-filter>
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.BATTERY_CHANGED" />
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
-        </receiver>
-        <service android:name=".background.BatteryLowService" />
+        </service>
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
